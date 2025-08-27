@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: msgo
+      POSTGRES_PASSWORD: msgo123
+      POSTGRES_DB: msgo_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  order:
+    build: ./microservices/order
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: msgo
+      DB_PASSWORD: msgo123
+      DB_NAME: msgo_db
+    depends_on:
+      - postgres
+    ports:
+      - "50051:50051"
+
+  payment:
+    build: ./microservices/payment
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: msgo
+      DB_PASSWORD: msgo123
+      DB_NAME: msgo_db
+    depends_on:
+      - postgres
+    ports:
+      - "50052:50052"
+
+  shipping:
+    build: ./microservices/shipping
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: msgo
+      DB_PASSWORD: msgo123
+      DB_NAME: msgo_db
+    depends_on:
+      - postgres
+    ports:
+      - "50053:50053"
+
+volumes:
+  pgdata:
